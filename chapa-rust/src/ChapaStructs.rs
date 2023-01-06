@@ -22,7 +22,7 @@ pub struct Bank {
 pub struct InitializeRequestResponse {
     message: String,
     status: String,
-    data: Option<Vec<CheckoutURL>>
+    data: Option<CheckoutURL>
 }
 
 #[derive(Debug, Deserialize)]

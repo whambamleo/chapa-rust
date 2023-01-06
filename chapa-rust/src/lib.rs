@@ -3,9 +3,9 @@
 include!("ChapaStructs.rs");
 
 use dotenv::dotenv;
-use reqwest::header::{AUTHORIZATION, HeaderMap};
-use std::env;
+use reqwest::header::{HeaderMap, AUTHORIZATION};
 use std::collections::HashMap;
+use std::env;
 
 // example function
 pub fn add(left: usize, right: usize) -> usize {
@@ -13,12 +13,11 @@ pub fn add(left: usize, right: usize) -> usize {
 }
 
 fn authorize() -> Result<HeaderMap, Box<dyn std::error::Error>> {
-
     dotenv().ok(); // pulling in env vars (should include api key)
 
     let api_key = env::var("CHAPA_API_PUBLIC_KEY")?; // NOTE: turbo-fished operation
-    
-    let mut headers = HeaderMap::new();  // headers hashmap
+
+    let mut headers = HeaderMap::new(); // headers hashmap
 
     // this casting is necessary because since headers needs a HeaderValue not a string
     let api_key_header_value = format!("Bearer {}", api_key).parse().unwrap();
@@ -30,21 +29,17 @@ fn authorize() -> Result<HeaderMap, Box<dyn std::error::Error>> {
 
 #[tokio::main]
 pub async fn get_banks() -> Result<(), Box<dyn std::error::Error>> {
-
-    const CHAPA_BASE_URL :&str = "https://api.chapa.co";
+    const CHAPA_BASE_URL: &str = "https://api.chapa.co";
     let version = "v1";
     // TODO: move base URL and version to .env ?
     // const CHAPA_BASE_URL :&str = env::var("CHAPA_BASE_URL");
-    
+
     let headers = authorize()?; // NOTE: turbo-fished operation
 
     // Building client + making request
     let client = reqwest::Client::new();
     let banks_url = format!("{}/{}/banks", CHAPA_BASE_URL, version);
-    let response = client.get(banks_url)
-                    .headers(headers)
-                    .send()
-                    .await?;
+    let response = client.get(banks_url).headers(headers).send().await?;
 
     // Deserialization into Bank and BankRequestResponse structs
     let response_json = response.json::<BankRequestResponse>().await?;
@@ -52,15 +47,16 @@ pub async fn get_banks() -> Result<(), Box<dyn std::error::Error>> {
     println!("{:#?}", response_json);
 
     Ok(())
-
 }
 
 #[tokio::main]
-pub async fn initialize_transaction(transaction:Transaction) -> Result<(), Box<dyn std::error::Error>> {
+pub async fn initialize_transaction(
+    transaction: Transaction,
+) -> Result<(), Box<dyn std::error::Error>> {
     println!("Initializing Transaction");
     println!("{}", transaction.currency);
 
-    const CHAPA_BASE_URL :&str = "https://api.chapa.co";
+    const CHAPA_BASE_URL: &str = "https://api.chapa.co";
     let version = "v1";
     // TODO: move base URL and version to .env ?
     // const CHAPA_BASE_URL :&str = env::var("CHAPA_BASE_URL");
@@ -71,25 +67,26 @@ pub async fn initialize_transaction(transaction:Transaction) -> Result<(), Box<d
     let client = reqwest::Client::new();
     let init_url = format!("{}/{}/transaction/initialize", CHAPA_BASE_URL, version);
 
-    let response = client.post(init_url)
-                                    .headers(headers)
-                                    .form(&transaction)
-                                    .send()
-                                    .await?;
+    let response = client
+        .post(init_url)
+        .headers(headers)
+        .form(&transaction)
+        .send()
+        .await?;
 
     // Deserialization into InitializeRequestResponse struct
-   let response_json = response.json::<InitializeRequestResponse>().await?;
+    let response_json = response.json::<InitializeRequestResponse>().await?;
 
-   println!("{:#?}", response_json);
+    println!("{:#?}", response_json);
 
     Ok(())
 }
 
 #[tokio::main]
-pub async fn verify_transaction(tx_ref :String) -> Result<(), Box<dyn std::error::Error>> {
+pub async fn verify_transaction(tx_ref: String) -> Result<(), Box<dyn std::error::Error>> {
     println!("Verifying Transaction");
 
-    const CHAPA_BASE_URL :&str = "https://api.chapa.co";
+    const CHAPA_BASE_URL: &str = "https://api.chapa.co";
     let version = "v1";
     // TODO: move base URL and version to .env ?
     // const CHAPA_BASE_URL :&str = env::var("CHAPA_BASE_URL");
@@ -98,14 +95,14 @@ pub async fn verify_transaction(tx_ref :String) -> Result<(), Box<dyn std::error
 
     // Building client + making request
     let client = reqwest::Client::new();
-    let verify_url = format!("{}/{}/transaction/verify/{}", CHAPA_BASE_URL, version, tx_ref);
+    let verify_url = format!(
+        "{}/{}/transaction/verify/{}",
+        CHAPA_BASE_URL, version, tx_ref
+    );
 
     println!("{}", verify_url);
 
-    let response = client.get(verify_url)
-                                    .headers(headers)
-                                    .send()
-                                    .await?;
+    let response = client.get(verify_url).headers(headers).send().await?;
 
     // Deserialization into InitializeRequestResponse struct
     let response_json = response.json::<VerifyRequestResponse>().await?;
