@@ -49,7 +49,7 @@ pub async fn get_banks() -> Result<(), Box<dyn std::error::Error>> {
 
 You can expect a similar response in the following format to be printed to the terminal.
 
-``` json
+```rs
 BankRequestResponse {
     message: "Banks retrieved",
     data: [
@@ -209,7 +209,7 @@ pub async fn initialize_transaction(
 
 You can expect a similar response in the following format to be printed to the terminal.
 
-```json
+```
 Initializing Transaction
 USD
 InitializeRequestResponse {
@@ -254,7 +254,7 @@ pub async fn verify_transaction(tx_ref: String) -> Result<(), Box<dyn std::error
 ```
 You can expect a similar response in the following format to be printed to the terminal.
 
-```json
+```rs
 Verifying Transaction
 https://api.chapa.co/v1/transaction/verify/test_transac_tx_ref
 VerifyRequestResponse {
