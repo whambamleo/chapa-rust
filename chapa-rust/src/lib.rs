@@ -123,9 +123,5 @@ mod tests {
         assert_eq!(result, 4);
     }
 
-    // #[test]
-    // fn get_banks_test() {
-    //     let result = get_banks();
-    //     assert_eq!(result, ());
-    // }
+    // TODO: Add tests
 }
